@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveModifiedFiles</string>
+	<key>command</key>
+	<string>#!/bin/bash
+echo "&lt;pre&gt;"
+/Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make -e -f "$TM_BUNDLE_SUPPORT/Makefile" upload
+echo "&lt;/pre&gt;"</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>@u</string>
+	<key>name</key>
+	<string>Upload</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>source.c++.arduino</string>
+	<key>uuid</key>
+	<string>66F3D8A7-5A16-4D87-9962-3A25328DC71A</string>
+</dict>
+</plist>

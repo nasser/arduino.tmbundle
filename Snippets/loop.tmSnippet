@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>void loop() {
+  ${1:/* code */}
+}</string>
+	<key>name</key>
+	<string>loop</string>
+	<key>scope</key>
+	<string>source.c++.arduino</string>
+	<key>tabTrigger</key>
+	<string>loop</string>
+	<key>uuid</key>
+	<string>66C4786C-646E-45C4-9F3F-DE8F62A937B1</string>
+</dict>
+</plist>
