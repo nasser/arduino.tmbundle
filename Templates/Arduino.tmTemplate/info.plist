@@ -12,7 +12,7 @@ fi</string>
 	<key>extension</key>
 	<string>pde</string>
 	<key>name</key>
-	<string>Arduino</string>
+	<string>Basic Sketch</string>
 	<key>uuid</key>
 	<string>1E20D9D4-3FD4-457E-8FD6-808A7CEF04D1</string>
 </dict>
