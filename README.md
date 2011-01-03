@@ -20,7 +20,8 @@ Usage
 =====
 * **⌘U** Compiles and uploads your sketch to the connected Arduino
 * **⌃⌥⌘H** Opens up local HTML documentation on to current word
-* **Bundles > Arduino > Watch Serial Port** Opens a terminal window monitoring the serial port. This feature is experimental.
+* **Bundles > Arduino > Watch Serial Port** Opens a terminal window monitoring the serial port.
+* There's a template, and a bunch of snippets for the most common Arduino methods. 
 
 Todo
 ====
@@ -35,6 +36,12 @@ For the adventurous
     
 Changes
 =======
+0.25a
+----
+* Added snippets for common methods
+* Added an Arduino project template
+* Altered the monitor script - it's now aware of your USB ports
+
 0.2a
 ----
 * Compile/upload bug fixed
