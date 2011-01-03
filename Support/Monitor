@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# get the list of USB ports
+dev_list=(`ls /dev/*usb*`)
+
+
+# echo them out with their index
+counter=0
+for filename in "${dev_list[@]}"; do
+  echo "${counter}. ${filename:5}"
+  counter=`expr $counter + 1`
+done
+
+# ask the user which port they'd like to monitor
+echo "Which port would you like to monitor? [enter digit then enter, defaults to zero]:"
+read dev_port
+
+# if they didn't supply one, just use zero
+if [ -n dev_port ]; then
+  dev_port=0
+fi
+
+# ask them what baud they'd like to use
+echo "Enter the baud rate [defaults to 9600]:"
+read dev_baud
+
+# if they didn't supply one, just use 9600
+if [ -n dev_baud ]; then
+  dev_baud=9600
+fi
+
+# give them a heads up
+echo "Monitoring ${dev_list[$dev_port]:5} on ${dev_baud}"
+
+# start monitoring
+screen ${dev_list[$dev_port]} ${dev_baud}
