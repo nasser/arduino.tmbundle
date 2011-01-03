@@ -21,12 +21,11 @@ Usage
 * **⌘U** Compiles and uploads your sketch to the connected Arduino
 * **⌃⌥⌘H** Opens up local HTML documentation on to current word
 * **Bundles > Arduino > Watch Serial Port** Opens a terminal window monitoring the serial port.
-* There's a template, and a bunch of snippets for the most common Arduino methods. 
+* **File > New From Template > Arduino > Basic Sketch** Creates a file with a blank basic sketch.
 
 Todo
 ====
 * Useful error messages (relative to the .pde file, not the generated .cpp file)
-* Dialog to select USB port, board type, baud rate etc.
 
 Bleeding Edge
 =============
