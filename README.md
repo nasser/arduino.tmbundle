@@ -4,9 +4,9 @@ Arduino TextMate Bundle
 
 There are other TextMate bundles out there, but they're mostly over two years old and don't work with new Arduino versions. This project aims to remain up-to-date and make embedded as enjoyable as everything else in TextMate.
 
-The little 'a' in '0.2a' stands for 'alpha'. Read that as "might not work for you". It will grow and improve with time, but for now brace yourself for bugs. That means bug reports, feature requests and patches!
+The little 'a' in '0.21a' stands for 'alpha'. Read that as "might not work for you". It will grow and improve with time, but for now brace yourself for bugs. That means bug reports, feature requests and patches!
 
-As of 0.2a, the bundle can compiles and uploads to the device, provides access to the documentation and highlights syntax correctly.
+As of 0.21a, the bundle can compiles and uploads to the device, provides access to the documentation and highlights syntax correctly.
 
 Installation
 ============
@@ -36,7 +36,7 @@ For the adventurous
     
 Changes
 =======
-0.25a
+0.21a
 ----
 * Added snippets for common methods
 * Added an Arduino project template
