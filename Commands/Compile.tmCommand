@@ -13,7 +13,7 @@ echo "&lt;/pre&gt;"</string>
 	<key>input</key>
 	<string>none</string>
 	<key>keyEquivalent</key>
-	<string>^~@r</string>
+	<string>@b</string>
 	<key>name</key>
 	<string>Compile</string>
 	<key>output</key>
