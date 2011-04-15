@@ -8,11 +8,7 @@
 	<string>#!/bin/bash
 
 echo "&lt;pre&gt;"
-<<<<<<< local
 /Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make -e -f "$TM_BUNDLE_SUPPORT/Makefile"
-=======
-make -f "$TM_BUNDLE_SUPPORT/Makefile"
->>>>>>> other
 echo "&lt;/pre&gt;"</string>
 	<key>input</key>
 	<string>none</string>
