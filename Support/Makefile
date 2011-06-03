@@ -82,7 +82,10 @@ $(ARDUINO)/HardwareSerial.cpp
 ARDUINO_LIB = \
 $(wildcard $(INSTALL_DIR)/libraries/*/*.cpp) \
 $(wildcard $(INSTALL_DIR)/libraries/*/*/*.cpp) \
-$(wildcard $(INSTALL_DIR)/libraries/*/*/*/*.cpp)
+$(wildcard $(INSTALL_DIR)/libraries/*/*/*/*.cpp) \
+$(wildcard $(INSTALL_DIR)/libraries/*/*.c) \
+$(wildcard $(INSTALL_DIR)/libraries/*/*/*.c) \
+$(wildcard $(INSTALL_DIR)/libraries/*/*/*/*.c)
 
 
 CXX_APP = applet/$(TARGET).cpp
