@@ -38,8 +38,8 @@
 # Default Environment vars
 # can be overridden
 
-ARDUINO_PORT ?= /dev/tty.usbserial-*
-ARDUINO_UPLOAD_RATE ?= 57600
+ARDUINO_PORT ?= /dev/tty.usbmodem*
+ARDUINO_UPLOAD_RATE ?= 115200
 ARDUINO_AVRDUDE_PROGRAMMER ?= stk500v1
 ARDUINO_MCU ?= atmega328p
 #ARDUINO_MCU ?= atmega168
