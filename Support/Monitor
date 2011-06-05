@@ -1,7 +1,7 @@
 #!/bin/bash
-
+set -- /dev/*usb*
 # make sure there's a usb port
-if [ -d /dev/*usb* ]; then
+if [ -r "$1" ]; then
   
   # get the list of USB ports
   dev_list=(`ls /dev/*usb*`)
