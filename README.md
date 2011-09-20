@@ -25,6 +25,39 @@ Usage
 * **Bundles > Arduino > Watch Serial Port** Opens a terminal window monitoring the serial port.
 * **File > New From Template > Arduino > Basic Sketch** Creates a file with a blank basic sketch.
 
+Shell Variables
+===============
+The compile/upload process can be finely controlled using TextMate's shell variables.
+
+Textmate > Preferences > Advanced > Shell Variables
+
+<table>
+  <tr>
+    <th>Variable</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>ARDUINO_PORT</td>
+    <td>The serial port to upload from (defaults to <code>/dev/tty.usbserial-*</code>)</td>
+  </tr>
+  <tr>
+    <td>ARDUINO_UPLOAD_RATE</td>
+    <td>The baud rate to upload at (defaults to <code>57600</code>)</td>
+  </tr>
+  <tr>
+    <td>ARDUINO_AVRDUDE_PROGRAMMER</td>
+    <td>The programmer to use (defaults to <code>stk500v1</code>)</td>
+  </tr>
+  <tr>
+    <td>ARDUINO_MCU</td>
+    <td>The Atmel chip on the board (defaults to <code>atmega328p</code>)</td>
+  </tr>
+  <tr>
+    <td>ARDUINO_F_CPU</td>
+    <td>The clock speed of the Atmel chip (defaults to <code>16000000</code>)</td>
+  </tr>
+</table>
+
 Todo
 ====
 * Useful error messages (relative to the .pde file, not the generated .cpp file)
