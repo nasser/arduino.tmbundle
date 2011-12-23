@@ -40,7 +40,7 @@
 
 ARDUINO_PORT ?= /dev/tty.usbmodem*
 ARDUINO_UPLOAD_RATE ?= 115200
-ARDUINO_AVRDUDE_PROGRAMMER ?= stk500v1
+ARDUINO_AVRDUDE_PROGRAMMER ?= stk500v2
 ARDUINO_MCU ?= atmega328p
 #ARDUINO_MCU ?= atmega168
 ARDUINO_F_CPU ?= 16000000
@@ -65,7 +65,6 @@ AVRDUDE_PATH = $(INSTALL_DIR)/hardware/tools/avr/bin
 C_MODULES =  \
 $(ARDUINO)/wiring_pulse.c \
 $(ARDUINO)/wiring_analog.c \
-$(ARDUINO)/pins_arduino.c \
 $(ARDUINO)/wiring.c \
 $(ARDUINO)/wiring_digital.c \
 $(ARDUINO)/WInterrupts.c \
@@ -115,7 +114,7 @@ AVR_HEADERS = $(INSTALL_DIR)/hardware/tools/avr/avr/include/avr
 ARDUINO_LIB_INCLUDES = $(addprefix -I, $(dir $(ARDUINO_LIB)))
 
 # Place -I options here
-CINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS)
+CINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS) -I/Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/variants/standard
 CXXINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS)
 
 # Compiler flag to set the C Standard level.
@@ -182,19 +181,19 @@ all: applet_files build sizeafter
 build: elf hex
 
 #applet_files: $(TARGET).pde
-applet/$(TARGET).cpp: $(TARGET).pde
+applet/$(TARGET).cpp: $(TARGET).ino
 	# Here is the "preprocessing".
-	# It creates a .cpp file based with the same name as the .pde file.
+	# It creates a .cpp file based with the same name as the .ino file.
 	# On top of the new .cpp file comes the WProgram.h header.
 	# and prototypes for setup() and Loop()
 	# Then the .cpp file will be compiled. Errors during compile will
 	# refer to this new, automatically generated, file.
-	# Not the original .pde file you actually edit...
+	# Not the original .ino file you actually edit...
 	test -d applet || mkdir applet
-	echo '#include "WProgram.h"' > applet/$(TARGET).cpp
+	echo '#include "Arduino.h"' > applet/$(TARGET).cpp
 	echo 'void setup();' >> applet/$(TARGET).cpp
 	echo 'void loop();' >> applet/$(TARGET).cpp
-	cat $(TARGET).pde >> applet/$(TARGET).cpp
+	cat $(TARGET).ino >> applet/$(TARGET).cpp
 
 elf: applet/$(TARGET).elf
 hex: applet/$(TARGET).hex
@@ -252,7 +251,7 @@ extcoff: $(TARGET).elf
 	$(NM) -n $< > $@
 
 	# Link: create ELF output file from library.
-#applet/$(TARGET).elf: $(TARGET).pde applet/core.a
+#applet/$(TARGET).elf: $(TARGET).ino applet/core.a
 applet/$(TARGET).elf: applet/$(TARGET).o applet/core.a
 	$(LD) $(ALL_LDFLAGS) -o $@ applet/$(TARGET).o applet/core.a
 
