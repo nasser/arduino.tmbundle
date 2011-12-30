@@ -38,15 +38,15 @@ Textmate > Preferences > Advanced > Shell Variables
   </tr>
   <tr>
     <td>ARDUINO_PORT</td>
-    <td>The serial port to upload from (defaults to <code>/dev/tty.usbserial-*</code>)</td>
+    <td>The serial port to upload from (defaults to <code>/dev/tty.usbmodem*</code>)</td>
   </tr>
   <tr>
     <td>ARDUINO_UPLOAD_RATE</td>
-    <td>The baud rate to upload at (defaults to <code>57600</code>)</td>
+    <td>The baud rate to upload at (defaults to <code>115200</code>)</td>
   </tr>
   <tr>
     <td>ARDUINO_AVRDUDE_PROGRAMMER</td>
-    <td>The programmer to use (defaults to <code>stk500v1</code>)</td>
+    <td>The programmer to use (defaults to <code>arduino</code>)</td>
   </tr>
   <tr>
     <td>ARDUINO_MCU</td>
@@ -56,11 +56,15 @@ Textmate > Preferences > Advanced > Shell Variables
     <td>ARDUINO_F_CPU</td>
     <td>The clock speed of the Atmel chip (defaults to <code>16000000</code>)</td>
   </tr>
-</table>
-
+  <tr>
+    <td>ARDUINO_VARIANT</td>
 Todo
 ====
 * Useful error messages (relative to the .ino file, not the generated .cpp file)
+
+    <td>The Arduino variant being used. Can be one of <code>standard</code>, <code>micro</code>, <code>mega</code>, <code>leonardo</code>, or <code>eightanaloginputs</code>. (defaults to <code>standard</code>)</td>
+  </tr>
+</table>
 
 Bleeding Edge
 =============
