@@ -58,10 +58,6 @@ Textmate > Preferences > Advanced > Shell Variables
   </tr>
   <tr>
     <td>ARDUINO_VARIANT</td>
-Todo
-====
-* Useful error messages (relative to the .ino file, not the generated .cpp file)
-
     <td>The Arduino variant being used. Can be one of <code>standard</code>, <code>micro</code>, <code>mega</code>, <code>leonardo</code>, or <code>eightanaloginputs</code>. (defaults to <code>standard</code>)</td>
   </tr>
 </table>
