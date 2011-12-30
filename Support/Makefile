@@ -44,6 +44,8 @@ ARDUINO_AVRDUDE_PROGRAMMER ?= arduino
 ARDUINO_MCU ?= atmega328p
 #ARDUINO_MCU ?= atmega168
 ARDUINO_F_CPU ?= 16000000
+# can be standard, micro, mega, leonardo, eightanaloginputs
+ARDUINO_VARIANT ?= standard
 
 
 TARGET = $(notdir $(CURDIR))
@@ -110,11 +112,12 @@ CDEFS = -DF_CPU=$(F_CPU)L -DARDUINO=$(VERSION)
 CXXDEFS = -DF_CPU=$(F_CPU)L -DARDUINO=$(VERSION)
 
 AVR_HEADERS = $(INSTALL_DIR)/hardware/tools/avr/avr/include/avr
+AVR_VARIANT_HEADERS = $(INSTALL_DIR)/hardware/arduino/variants/$(ARDUINO_VARIANT)
 
 ARDUINO_LIB_INCLUDES = $(addprefix -I, $(dir $(ARDUINO_LIB)))
 
 # Place -I options here
-CINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS) -I/Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/variants/standard
+CINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS) -I$(AVR_VARIANT_HEADERS)
 CXXINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS)
 
 # Compiler flag to set the C Standard level.
