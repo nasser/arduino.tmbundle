@@ -12,7 +12,7 @@ Installation
 ============
 1. [Get the latest Arduino](http://arduino.cc/en/Guide/MacOSX). Version 1.0 and later is supported, and it must be installed to /Applications
 2. [Get TextMate](http://macromates.com/).
-3. [Get the latest Arduino TextMate bundle](https://github.com/nasser/arduino.tmbundle/zipball/master).
+3. [Get the latest Arduino TextMate bundle](https://github.com/nasser/arduino.tmbundle/zipball/v1.0a).
 4. Extract the zip file to `~/Library/Application Support/TextMate/Bundles/Arduino.tmbundle`
 5. If TextMate was open during this process, click Bundles>Bundle Editor>Reload Bundles
 6. Check the 'Default Environment vars' near the top of `~/Library/Application Support/TextMate/Bundles/Arduino.tmbundle/Support/Makefile`.  Any you need to override - especially check the ARDUINO_MCU var - can be added in TextMate's Preferences => Advanced => Shell Variables.
