@@ -57,7 +57,7 @@ F_CPU = 		$(ARDUINO_F_CPU)
 ############################################################################
 # Below here nothing should be changed...
 
-VERSION=22
+VERSION=100
 ARDUINO = $(INSTALL_DIR)/hardware/arduino/cores/arduino
 AVR_TOOLS_PATH = $(INSTALL_DIR)/hardware/tools/avr/bin
 # AVR_TOOLS_PATH = /usr/bin
