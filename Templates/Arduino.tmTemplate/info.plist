@@ -7,10 +7,10 @@
    TM_YEAR=`date +%Y` \
    TM_DATE=`date +%Y-%m-%d` \
    perl -pe 's/\$\{([^}]*)\}/$ENV{$1}/g' \
-      &lt; sketch.pde &gt; "$TM_NEW_FILE"
+      &lt; sketch.ino &gt; "$TM_NEW_FILE"
 fi</string>
 	<key>extension</key>
-	<string>pde</string>
+	<string>ino</string>
 	<key>name</key>
 	<string>Basic Sketch</string>
 	<key>uuid</key>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby
+
+tm_word = STDIN.read
+html_file = nil
+
+arduino_dir = "/Applications/Arduino.app/Contents/Resources/Java"
+reference_dir = "#{arduino_dir}/reference"
+keywords_file = "#{arduino_dir}/lib/keywords.txt"
+css_file = "#{reference_dir}/arduinoUno.css"
+
+keywords = open(keywords_file).each_line.map {|line| line.split}
+keywords.reject! do |kw|
+	kw.size &lt; 2 or kw.first == "#"
+end
+keywords.each {|kw| html_file = "#{reference_dir}/#{kw.last}.html" if tm_word == kw.first }
+
+if html_file
+	begin
+		html = open(html_file).read
+		css = open(css_file).read + &lt;&lt;-NEWCSS
+			#wikitext p:first-child,
+			#pageheader,
+			#pagenav,
+			#pagefooter {
+				display: none;
+			}
+			
+			#page {
+				width: 100%;
+			}
+
+NEWCSS
+		puts html.sub! /&lt;link.*arduino.*\.css.*?&gt;/mi, "&lt;style type='text/css'&gt;#{css}&lt;/style&gt;"
+
+	rescue Errno::ENOENT
+		# do nothing
+	end
+		
+	exit
+end
+
+puts "No documentation found for '#{tm_word}'!"</string>
+	<key>fallbackInput</key>
+	<string>word</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^~@h</string>
+	<key>name</key>
+	<string>Local Help</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>source.c++.arduino</string>
+	<key>uuid</key>
+	<string>26732C56-E39B-419D-8D1F-815CD9FA7C32</string>
+</dict>
+</plist>
