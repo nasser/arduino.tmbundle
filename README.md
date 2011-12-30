@@ -72,7 +72,9 @@ Changes
 =======
 1.0a
 ----
-* Works with Arduino 1.0
+* Fixed for Arduino 1.0
+* Improved local help command
+* Changed versioning scheme to match Arduino's. This bundle's version will always be equal to the version of Arduino it is most compatible with.
 
 0.21a
 ----
