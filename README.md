@@ -1,16 +1,16 @@
-Arduino TextMate Bundle
-=======================
+Arduino TextMate Bundle 1.0a
+============================
 [TextMate](http://macromates.com) is the best editor in human history. [Arduino](http://arduino.cc) is the easiest embedded platform to dive into. Why don't the two work together? The Arduino TextMate Bundle solves that glaring error, and the universe is thus balanced.
 
 There are other TextMate bundles out there, but they're mostly over two years old and don't work with new Arduino versions. This project aims to remain up-to-date and make embedded as enjoyable as everything else in TextMate.
 
-The little 'a' in '0.21a' stands for 'alpha'. Read that as "might not work for you". It will grow and improve with time, but for now brace yourself for bugs. That means bug reports, feature requests and patches!
+The little 'a' in '1.0a' stands for 'alpha'. Read that as "might not work for you". It will grow and improve with time, but for now brace yourself for bugs. That means bug reports, feature requests and patches!
 
-As of 0.21a, the bundle can compiles and uploads to the device, provides access to the documentation and highlights syntax correctly.
+As of 1.0a, the bundle can compiles and uploads to the device, provides access to the documentation and highlights syntax correctly.
 
 Installation
 ============
-1. [Get the latest Arduino](http://arduino.cc/en/Guide/MacOSX). 0018 and later is supported, and it must be installed to /Applications
+1. [Get the latest Arduino](http://arduino.cc/en/Guide/MacOSX). Version 1.0 and later is supported, and it must be installed to /Applications
 2. [Get TextMate](http://macromates.com/).
 3. [Get the latest Arduino TextMate bundle](https://github.com/nasser/arduino.tmbundle/zipball/master).
 4. Extract the zip file to `~/Library/Application Support/TextMate/Bundles/Arduino.tmbundle`
@@ -60,7 +60,7 @@ Textmate > Preferences > Advanced > Shell Variables
 
 Todo
 ====
-* Useful error messages (relative to the .pde file, not the generated .cpp file)
+* Useful error messages (relative to the .ino file, not the generated .cpp file)
 
 Bleeding Edge
 =============
@@ -70,6 +70,10 @@ For the adventurous
     
 Changes
 =======
+1.0a
+----
+* Works with Arduino 1.0
+
 0.21a
 ----
 * Added snippets for common methods
