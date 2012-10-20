@@ -13,7 +13,6 @@ html_file = nil
 arduino_dir = "/Applications/Arduino.app/Contents/Resources/Java"
 reference_dir = "#{arduino_dir}/reference"
 keywords_file = "#{arduino_dir}/lib/keywords.txt"
-css_file = "#{reference_dir}/arduinoUno.css"
 
 keywords = open(keywords_file).each_line.map {|line| line.split}
 keywords.reject! do |kw|
@@ -23,21 +22,15 @@ keywords.each {|kw| html_file = "#{reference_dir}/#{kw.last}.html" if tm_word ==
 
 if html_file
 	begin
-		html = open(html_file).read
-		css = open(css_file).read + &lt;&lt;-NEWCSS
-			#wikitext p:first-child,
-			#pageheader,
-			#pagenav,
-			#pagefooter {
-				display: none;
-			}
-			
-			#page {
+		css = &lt;&lt;-NEWCSS
+			iframe {
 				width: 100%;
+				height: 100%;
+				border: none;
 			}
-
 NEWCSS
-		puts html.sub! /&lt;link.*arduino.*\.css.*?&gt;/mi, "&lt;style type='text/css'&gt;#{css}&lt;/style&gt;"
+		html = "&lt;html&gt;&lt;head&gt;&lt;style&gt;#{css}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;iframe src='file://#{html_file}'&gt;&lt;/body&gt;"
+		puts html
 
 	rescue Errno::ENOENT
 		# do nothing
