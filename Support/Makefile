@@ -194,8 +194,7 @@ applet/$(TARGET).cpp: $(TARGET).ino
 	# Not the original .ino file you actually edit...
 	test -d applet || mkdir applet
 	echo '#include "Arduino.h"' > applet/$(TARGET).cpp
-	echo 'void setup();' >> applet/$(TARGET).cpp
-	echo 'void loop();' >> applet/$(TARGET).cpp
+	echo `arduino-preprocess $(TARGET).ino` >> applet/$(TARGET).cpp
 	cat $(TARGET).ino >> applet/$(TARGET).cpp
 
 elf: applet/$(TARGET).elf
