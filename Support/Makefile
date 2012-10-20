@@ -77,6 +77,7 @@ CXX_MODULES = \
 $(ARDUINO)/Tone.cpp \
 $(ARDUINO)/main.cpp \
 $(ARDUINO)/WMath.cpp \
+$(ARDUINO)/WString.cpp \
 $(ARDUINO)/Print.cpp \
 $(ARDUINO)/HardwareSerial.cpp
 
