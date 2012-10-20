@@ -89,11 +89,15 @@ $(wildcard $(INSTALL_DIR)/libraries/*/*.c) \
 $(wildcard $(INSTALL_DIR)/libraries/*/*/*.c) \
 $(wildcard $(INSTALL_DIR)/libraries/*/*/*/*.c)
 
+# The .ino files get preprocessed and merged into this
+APP_SKETCH = applet/$(TARGET).cpp
+# Other .c/.cpp files in the project get compiled separatley
+APP_SRC_CXX = $(wildcard *.cpp)
+APP_SRC_C = $(wildcard *.c)
 
-CXX_APP = applet/$(TARGET).cpp
 MODULES = $(C_MODULES) $(CXX_MODULES) $(ARDUINO_LIB)
 SRC = $(C_MODULES)
-CXXSRC = $(CXX_MODULES) $(CXX_APP) $(ARDUINO_LIB)
+CXXSRC = $(CXX_MODULES) $(APP_SKETCH) $(ARDUINO_LIB)
 FORMAT = ihex
 
 
@@ -168,6 +172,7 @@ MV = mv -f
 # Define all object files.
 OBJ = $(SRC:.c=.o) $(CXXSRC:.cpp=.o) $(ASRC:.S=.o)
 OBJ_MODULES = $(C_MODULES:.c=.o) $(CXX_MODULES:.cpp=.o) $(ARDUINO_LIB:.cpp=.o)
+OBJ_APP = $(APP_SKETCH:.cpp=.o) $(APP_SRC_CXX:.cpp=.o) $(APP_SRC_C:.c=.o)
 
 # Define all listing files.
 LST = $(ASRC:.S=.lst) $(CXXSRC:.cpp=.lst) $(SRC:.c=.lst)
@@ -185,18 +190,20 @@ all: applet_files build sizeafter
 build: elf hex
 
 #applet_files: $(TARGET).pde
+# Here is the "preprocessing".
+# It creates a .cpp file based with the same name as the .ino file.
+# On top of the new .cpp file comes the WProgram.h header.
+# and prototypes for setup() and Loop()
+# Then the .cpp file will be compiled. Errors during compile will
+# refer to this new, automatically generated, file.
+# Not the original .ino file you actually edit...
 applet/$(TARGET).cpp: $(TARGET).ino
-	# Here is the "preprocessing".
-	# It creates a .cpp file based with the same name as the .ino file.
-	# On top of the new .cpp file comes the WProgram.h header.
-	# and prototypes for setup() and Loop()
-	# Then the .cpp file will be compiled. Errors during compile will
-	# refer to this new, automatically generated, file.
-	# Not the original .ino file you actually edit...
 	test -d applet || mkdir applet
 	echo '#include "Arduino.h"' > applet/$(TARGET).cpp
-	echo `arduino-preprocess $(TARGET).ino` >> applet/$(TARGET).cpp
-	cat $(TARGET).ino >> applet/$(TARGET).cpp
+	cat *.ino > .$(TARGET)_merged.ino
+	echo `arduino-preprocess .$(TARGET)_merged.ino` >> applet/$(TARGET).cpp
+	cat .$(TARGET)_merged.ino >> applet/$(TARGET).cpp
+	rm .$(TARGET)_merged.ino
 
 elf: applet/$(TARGET).elf
 hex: applet/$(TARGET).hex
@@ -255,8 +262,8 @@ extcoff: $(TARGET).elf
 
 	# Link: create ELF output file from library.
 #applet/$(TARGET).elf: $(TARGET).ino applet/core.a
-applet/$(TARGET).elf: applet/$(TARGET).o applet/core.a
-	$(LD) $(ALL_LDFLAGS) -o $@ applet/$(TARGET).o applet/core.a
+applet/$(TARGET).elf: $(OBJ_APP) applet/core.a
+	$(LD) $(ALL_LDFLAGS) -o $@ $(OBJ_APP) applet/core.a
 
 applet/core.a: $(OBJ_MODULES)
 	@for i in $(OBJ_MODULES); do echo $(AR) rcs applet/core.a $$i; $(AR) rcs applet/core.a $$i; done
