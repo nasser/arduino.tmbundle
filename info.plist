@@ -17,12 +17,24 @@
 			<string>991677A0-34C3-4AD8-A679-B8F41870362E</string>
 			<string>------------------------------------</string>
 			<string>370DC329-CFB3-4663-81F3-753F56E3C1E8</string>
-			<string>CA52EB7C-9E55-41E7-8A3B-922497F95BD1</string>
+			<string>------------------------------------</string>
+			<string>B450333C-28C7-43D2-BBD5-EC495D4F691E</string>
 			<string>------------------------------------</string>
 			<string>E0E814C3-E161-4198-9D42-8CB3B78510C8</string>
 		</array>
 		<key>submenus</key>
-		<dict/>
+		<dict>
+			<key>B450333C-28C7-43D2-BBD5-EC495D4F691E</key>
+			<dict>
+				<key>items</key>
+				<array>
+        			<string>BFCDD012-5C16-4C84-A4E1-08523EE50D76</string>
+        			<string>CA52EB7C-9E55-41E7-8A3B-922497F95BD1</string>
+				</array>
+				<key>name</key>
+				<string>Watch Serial Port with...</string>
+			</dict>
+		</dict>
 	</dict>
 	<key>name</key>
 	<string>Arduino</string>
@@ -31,6 +43,7 @@
 		<string>5DFED922-173F-4FAE-BB91-9A06868E6A6E</string>
 		<string>370DC329-CFB3-4663-81F3-753F56E3C1E8</string>
 		<string>CA52EB7C-9E55-41E7-8A3B-922497F95BD1</string>
+		<string>BFCDD012-5C16-4C84-A4E1-08523EE50D76</string>
 		<string>65E5AFAE-4AE7-4DAE-837B-1B99810E464C</string>
 		<string>1E20D9D4-3FD4-457E-8FD6-808A7CEF04D1</string>
 		<string>B901B2C1-83A7-48E6-BA88-00220566836C</string>
