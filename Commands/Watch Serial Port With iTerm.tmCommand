@@ -6,16 +6,36 @@
 	<string>nop</string>
 	<key>command</key>
 	<string>TM_BUNDLE_SUPPORT_ESC=$(echo $TM_BUNDLE_SUPPORT | sed '/Support/s/ /\\\\ /')
- osascript -e "tell application \"Terminal\" to do script \"${TM_BUNDLE_SUPPORT_ESC}/Monitor\""</string>
+ osascript -e "tell application \"iTerm\"
+	activate
+
+	try
+		set _term to first terminal
+	on error
+		set _term to (make new terminal)
+	end try
+
+	tell _term
+		launch session \"Default\"
+		set _session to last session
+	end tell
+
+	tell _session
+		set name to \"Arduino Monitor\"
+		write text \"${TM_BUNDLE_SUPPORT_ESC}/Monitor\"
+	end tell
+
+end tell"
+</string>
 	<key>input</key>
 	<string>none</string>
 	<key>name</key>
-	<string>Terminal</string>
+	<string>iTerm</string>
 	<key>output</key>
 	<string>discard</string>
 	<key>scope</key>
 	<string>source.c++.arduino</string>
 	<key>uuid</key>
-	<string>CA52EB7C-9E55-41E7-8A3B-922497F95BD1</string>
+	<string>BFCDD012-5C16-4C84-A4E1-08523EE50D76</string>
 </dict>
 </plist>
