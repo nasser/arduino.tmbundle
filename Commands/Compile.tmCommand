@@ -2,25 +2,272 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>beforeRunningCommand</key>
-	<string>saveModifiedFiles</string>
-	<key>command</key>
-	<string>#!/bin/bash
+        <key>beforeRunningCommand</key>
+        <string>saveModifiedFiles</string>
+        <key>command</key>
+        <string>#!/bin/bash
+				  echo "
+					&lt;div id='info'&gt;
+					&lt;style&gt; 
+					html {
+						font-size: 62.5%;
+						font-family: 'Raleway', 'Helvetica Neue', sans-serif;
+					}
+					body {
+						max-width: 1000px;
+						margin: auto;
+						display: table;
+						display: -webkit-flex;
+						display: -moz-flex;
+						display: -o-flex;
+						display: flex;
+						-webkit-align-content: center;
+						-moz-align-content: center;
+						-o-align-content: center;
+						align-content: center;
+						-webkit-justify-content: center;
+						-moz-justify-content: center;
+						-o-justify-content: center;
+						justify-content: center;
+						-webkit-flex-direction: column;
+						flex-direction: column;
+					    -webkit-transition: opacity 1s   cubic-bezier(.4,1,.66,0) 1s;
 
-echo "&lt;pre&gt;"
-/Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make -e -f "$TM_BUNDLE_SUPPORT/Makefile"
-echo "&lt;/pre&gt;"</string>
-	<key>input</key>
-	<string>none</string>
-	<key>keyEquivalent</key>
-	<string>@b</string>
-	<key>name</key>
-	<string>Compile</string>
-	<key>output</key>
-	<string>showAsHTML</string>
-	<key>scope</key>
-	<string>source.c++.arduino</string>
-	<key>uuid</key>
-	<string>B901B2C1-83A7-48E6-BA88-00220566836C</string>
+						font-size: 1.6rem;
+						opacity: 0.0;
+					}
+					body, div {
+						-webkit-flex: 1;
+						-moz-flex: 1;
+						-o-flex: 1;
+						flex: 1;
+					    display: -webkit-flex;
+					    display: -moz-flex;
+					    display: -ms-flex;
+					    display: -o-flex;
+					    display: flex;
+					    -webkit-flex-direction: column;
+					    -moz-flex-direction: column;
+					    -o-flex-direction: column;
+					    -ms-flex-direction: column;
+					    flex-direction: column;
+					    -webkit-justify-content: center;
+					    -moz-justify-content: center;
+					    -ms-justify-content: center;
+					    -o-justify-content: center;
+					    justify-content: center;
+					    -webkit-align-content: center;
+					    -moz-align-content: center;
+					    -ms-align-content: center;
+					    -o-align-content: center;
+					    align-content: center;
+
+					}
+
+					pre {
+						display: none;
+						color: #333333;
+						white-space: normal;
+					}
+					div {
+						overflow: scroll;
+						white-space: pre;
+					}
+					div:last-of-type{
+					    -webkit-flex: 3;
+					    -moz-flex: 3;
+					    -o-flex: 3;
+					    flex: 3;
+					}
+					div:last-of-type li:first-of-type{
+					    border-bottom: none !important;
+					}
+					div:last-of-type li:nth-of-type(2n + 1){
+					    border-bottom: 2px solid #888;
+					    padding-bottom: 2rem;
+					}
+					li{
+					    list-style-type : none;
+					}
+					li:nth-of-type(2n + 1){
+					    margin-bottom: 2rem;
+					}
+					#arduinoOutput {
+						display: none;
+					}
+					#info div{
+					    border: 1px solid #888;
+					}
+					&lt;/style&gt;
+						&lt;pre&gt; "
+			
+			cd $TM_DIRECTORY
+			/Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make -e -f "$TM_BUNDLE_SUPPORT/Makefile"
+			
+			echo " &lt;/pre&gt;
+					&lt;script type='text/javascript'&gt;
+					//====================================================
+					//	globals
+					//	
+					//
+					//
+					var div = document.createElement ('div')
+						, pre = document.getElementsByTagName ('pre')
+						, info = document.getElementById ('info')
+						, range = document.createRange ()
+						// customize this regex to match where you want the text that gets displayed in the pre's output  to be split up.
+						// if you don't know what that means- in the arduino browser window that pops up, right click and choose 'Inspect Element', click console and where you see
+						// pre is : [a long string of text here] , determine where you want to split that up to make it more readable.
+						// use single quotes ('') and use the html escape code of any special characters you want to use as the FirstWord of anything. -- http://www.htmlescape.net/htmlescape_tool.html
+						, preRegularExpression = new RegExp (('Applications\/Arduino.app\/Contents\/Resources\/Java\/hardware\/'), 'g')
+						// write a string here that will let you know that your regular expression split where you wanted it to. you'll see a '...' after you run it.
+						, preRegularExpressionFirstWord = 'Applications/'
+						// do what you did for preRegularExpression for the arduinoRegularExpression (check the log for arduino is:
+						, arduinoRegularExpression = new RegExp (('applet\/'), 'g')
+						, arduinoRegularExpressionFirstWord = '~ '
+
+						, done = false;
+						div.id = 'arduinoOutput';
+
+					function BeautifulText(initialElement, regEx){
+						'use strict';
+						this.initialElement = initialElement;
+						this.regEx = regEx;
+						//	prettyfyText
+						//	takes a string, splits it at the regex, prepends keepthis, appends addThis
+						//	Returns an array of the newly created substrings.
+						//
+						//
+						var prettyfy = function(str, regExp, prepend, append ){
+							var result
+								,   splitted = str.split (regExp)
+								,   arr = [];
+							if (str.search (regExp) !== -1) {
+								for (var i = 0; i &lt; splitted.length; i++) {
+									if (prepend){
+										result = prepend + '' + splitted[i] + ' ' + append;
+									} else {
+										result = splitted[i] + ' ' + append;
+									}
+									arr.push(result);
+								}
+							} else {
+								result = 'fail  \n ' + str
+								return false;
+							}
+							return arr;
+						};
+
+						//	grabText
+						//	'grabs' the text within an element or NodeList and passes that elements' text along with the regularExpression argument to prettyfy.
+						//	 returns the array it gets back from prettyfy.
+						//
+						// usage:  var result = grabText( element, regularExpression);
+						//
+						//
+						//
+						var grabText = function(elem, re){
+
+							var theText
+								, result
+								, newline = '\n'
+								, prepend;
+
+							if (elem instanceof NodeList) {
+								for (var i = 0; i &lt; elem.length; i++) {
+									theText += elem[i].innerText;
+								}
+								console.log('\n \n pre is : \n' + theText + '\n');
+								prepend = preRegularExpressionFirstWord  + '  ...';
+							} else if (typeof elem !== 'undefined') {
+								theText = elem.innerText;
+								console.log('\n \n arduino is: \n ' + theText + '\n');
+								prepend = arduinoRegularExpressionFirstWord;
+							} else {
+								return false;
+							}
+							result = prettyfy(theText, re, prepend, newline);
+							return result;
+						};
+
+						//  listify
+						//  take the inputted array of text and turn it into an unordered list.
+						//
+						//
+						//
+						var listify= function(theText ){
+							var content
+								, ul = document.createElement ('ul')
+								, newdiv = document.createElement ('div')
+								, newlist = newdiv.appendChild (ul);
+
+							for (var i = 0; i &lt; theText.length; i++) {
+								var current = theText[i]
+									, li = document.createElement ('li');
+								content = document.createTextNode (current);
+
+								li.appendChild (content);
+								newlist.appendChild (li);
+							}
+							info.appendChild (newdiv);
+
+						};
+
+						this.grabText = grabText(this.initialElement, this.regEx);
+						listify(this.grabText);
+					}
+					//====================================================
+					//	surroundTxt
+					//	takes a range object and surrounds it with (withThis)
+					//
+					//
+					function surroundTxt (rangeObj, withThis) {
+						rangeObj.surroundContents (withThis);
+						return done = true;
+					}
+
+					//====================================================
+					//	constructTxt
+					//	takes the text that immediately follows div#info and passes it to surroundTxt.
+					//
+					//
+					function constructTxt () {
+						var txt = info.nextSibling;
+						range.setStart (txt, 0);
+						range.setEnd (txt, txt.length);
+						setTimeout (surroundTxt (range, div), 10);
+					}
+					//====================================================
+					//	totallyReady (the equivilant of document ready.)
+					//	
+					//
+					//
+					function totallyReady () {
+						constructTxt ();
+						var preObj = new BeautifulText(pre, preRegularExpression);
+						var ard = document.getElementById ('arduinoOutput');
+						var arduinoObj = new BeautifulText(ard, arduinoRegularExpression);
+						preObj;
+						arduinoObj;
+						document.body.style.opacity = 1;
+
+					}
+					setTimeout (totallyReady, 10);
+
+			"
+			
+		</string>
+        <key>input</key>
+        <string>none</string>
+        <key>keyEquivalent</key>
+        <string>@b</string>
+        <key>name</key>
+        <string>Compile</string>
+        <key>output</key>
+        <string>showAsHTML</string>
+        <key>scope</key>
+        <string>source.c++.arduino</string>
+        <key>uuid</key>
+        <string>B901B2C1-83A7-48E6-BA88-00220566836C</string>
 </dict>
 </plist>
