@@ -1,309 +1,447 @@
-# Arduino 0021 Makefile
-# Arduino adaptation by mellis, eighthave, oli.keller, pyrou
+#_______________________________________________________________________________
 #
-# This makefile allows you to build sketches from the command line
-# without the Arduino environment (or Java).
+#                         edam's Arduino makefile
+#_______________________________________________________________________________
+#                                                                    version 0.5
 #
-# Detailed instructions for using the makefile:
+# Copyright (C) 2011, 2012, 2013 Tim Marston <tim@ed.am>.
 #
-#  1. Copy this file into the folder with your sketch. There should be a
-#     file with the same name as the folder and with the extension .pde
-#     (e.g. foo.pde in the foo/ folder).
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#  2. Modify the line containg "INSTALL_DIR" to point to the directory that
-#     contains the Arduino installation (for example, under Mac OS X, this
-#     might be /Applications/Arduino.app).
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#  3. Modify the line containing "PORT" to refer to the filename
-#     representing the USB or serial connection to your Arduino board
-#     (e.g. PORT = /dev/tty.USB0).  If the exact name of this file
-#     changes, you can use * as a wildcard (e.g. PORT = /dev/tty.usb*).
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 #
-#  4. Set the line containing "MCU" to match your board's processor.
-#     Older one's are atmega8 based, newer ones like Arduino Mini, Bluetooth
-#     or Diecimila have the atmega168.  If you're using a LilyPad Arduino,
-#     change F_CPU to 8000000.
+#_______________________________________________________________________________
 #
-#  5. At the command line, change to the directory containing your
-#     program's file and the makefile.
 #
-#  6. Type "make" and press enter to compile/verify your program.
+# This is a general purpose makefile for use with Arduino hardware and
+# software.  It works with the arduino-1.0 and later software releases.  It
+# should work GNU/Linux and OS X.  To download the latest version of this
+# makefile visit the following website where you can also find documentation on
+# it's use.  (The following text can only really be considered a reference.)
 #
-#  7. Type "make upload", reset your Arduino board, and press enter to
-#     upload your program to the Arduino board.
+#   http://ed.am/dev/make/arduino-mk
 #
-# $Id$
-
-
-# Default Environment vars
-# can be overridden
-
-ARDUINO_PORT ?= /dev/tty.usbmodem*
-ARDUINO_UPLOAD_RATE ?= 115200
-ARDUINO_AVRDUDE_PROGRAMMER ?= arduino
-ARDUINO_MCU ?= atmega328p
-#ARDUINO_MCU ?= atmega168
-ARDUINO_F_CPU ?= 16000000
-# can be standard, micro, mega, leonardo, eightanaloginputs
-ARDUINO_VARIANT ?= standard
-
-
-TARGET = $(notdir $(CURDIR))
-INSTALL_DIR = /Applications/Arduino.app/Contents/Resources/Java
-UPLOAD_RATE = 		$(ARDUINO_UPLOAD_RATE)
-PORT = 			$(ARDUINO_PORT)
-AVRDUDE_PROGRAMMER = 	$(ARDUINO_AVRDUDE_PROGRAMMER)
-MCU = 			$(ARDUINO_MCU)
-F_CPU = 		$(ARDUINO_F_CPU)
-
-############################################################################
-# Below here nothing should be changed...
-
-VERSION=100
-ARDUINO = $(INSTALL_DIR)/hardware/arduino/cores/arduino
-AVR_TOOLS_PATH = $(INSTALL_DIR)/hardware/tools/avr/bin
-# AVR_TOOLS_PATH = /usr/bin
-AVRDUDE_PATH = $(INSTALL_DIR)/hardware/tools/avr/bin
-C_MODULES =  \
-$(ARDUINO)/wiring_pulse.c \
-$(ARDUINO)/wiring_analog.c \
-$(ARDUINO)/wiring.c \
-$(ARDUINO)/wiring_digital.c \
-$(ARDUINO)/WInterrupts.c \
-$(ARDUINO)/wiring_shift.c \
-# end of C_MODULES
-
-CXX_MODULES = \
-$(ARDUINO)/Tone.cpp \
-$(ARDUINO)/main.cpp \
-$(ARDUINO)/WMath.cpp \
-$(ARDUINO)/WString.cpp \
-$(ARDUINO)/Print.cpp \
-$(ARDUINO)/HardwareSerial.cpp
-
-ARDUINO_LIB = \
-$(wildcard $(INSTALL_DIR)/libraries/*/*.cpp) \
-$(wildcard $(INSTALL_DIR)/libraries/*/*/*.cpp) \
-$(wildcard $(INSTALL_DIR)/libraries/*/*/*/*.cpp) \
-$(wildcard $(INSTALL_DIR)/libraries/*/*.c) \
-$(wildcard $(INSTALL_DIR)/libraries/*/*/*.c) \
-$(wildcard $(INSTALL_DIR)/libraries/*/*/*/*.c)
-
-# The .ino files get preprocessed and merged into this
-APP_SKETCH = applet/$(TARGET).cpp
-# Other .c/.cpp files in the project get compiled separatley
-APP_SRC_CXX = $(wildcard *.cpp)
-APP_SRC_C = $(wildcard *.c)
-
-MODULES = $(C_MODULES) $(CXX_MODULES) $(ARDUINO_LIB)
-SRC = $(C_MODULES)
-CXXSRC = $(CXX_MODULES) $(APP_SKETCH) $(ARDUINO_LIB)
-FORMAT = ihex
-
-
-# Name of this Makefile (used for "make depend").
-MAKEFILE = Makefile
-
-# Debugging format.
-# Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
-# AVR (extended) COFF requires stabs, plus an avr-objcopy run.
-#DEBUG = stabs
-DEBUG =
-
-OPT = s
-
-# Place -D or -U options here
-CDEFS = -DF_CPU=$(F_CPU)L -DARDUINO=$(VERSION)
-CXXDEFS = -DF_CPU=$(F_CPU)L -DARDUINO=$(VERSION)
-
-AVR_HEADERS = $(INSTALL_DIR)/hardware/tools/avr/avr/include/avr
-AVR_VARIANT_HEADERS = $(INSTALL_DIR)/hardware/arduino/variants/$(ARDUINO_VARIANT)
-
-ARDUINO_LIB_INCLUDES = $(addprefix -I, $(dir $(ARDUINO_LIB)))
-
-# Place -I options here
-CINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS) -I$(AVR_VARIANT_HEADERS)
-CXXINCS = -I$(CURDIR) -I$(ARDUINO) $(ARDUINO_LIB_INCLUDES) -I$(AVR_HEADERS)
-
-# Compiler flag to set the C Standard level.
-# c89   - "ANSI" C
-# gnu89 - c89 plus GCC extensions
-# c99   - ISO C99 standard (not yet fully implemented)
-# gnu99 - c99 plus GCC extensions
-#CSTANDARD = -std=gnu99
-CDEBUG = -g$(DEBUG)
-#CWARN = -Wall -Wstrict-prototypes
-#CWARN = -Wall   # show all warnings
-CWARN = -w      # suppress all warnings
-####CTUNING = -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
-CTUNING = -ffunction-sections -fdata-sections
-CXXTUNING = -fno-exceptions -ffunction-sections -fdata-sections
-#CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
-
-CFLAGS = $(CDEBUG) -O$(OPT) $(CWARN) $(CTUNING) $(CDEFS) $(CINCS) $(CSTANDARD) $(CEXTRA)
-CXXFLAGS = $(CDEBUG) -O$(OPT) $(CWARN) $(CXXTUNING) $(CDEFS) $(CINCS)
-#ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs
-LDFLAGS = -O$(OPT) -lm -Wl,--gc-sections
-
-
-# Programming support using avrdude. Settings and variables.
-AVRDUDE_PORT = $(PORT)
-AVRDUDE_WRITE_FLASH = -U flash:w:applet/$(TARGET).hex
-
-#AVRDUDE_FLAGS = -V -F -C $(INSTALL_DIR)/hardware/tools/avr/etc/avrdude.conf \
-
-AVRDUDE_FLAGS = -V -F -C $(INSTALL_DIR)/hardware/tools/avr/etc/avrdude.conf \
--p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) \
--b $(UPLOAD_RATE)
-
-# Program settings
-CC = $(AVR_TOOLS_PATH)/avr-gcc
-CXX = $(AVR_TOOLS_PATH)/avr-g++
-LD = $(AVR_TOOLS_PATH)/avr-gcc
-OBJCOPY = $(AVR_TOOLS_PATH)/avr-objcopy
-OBJDUMP = $(AVR_TOOLS_PATH)/avr-objdump
-AR  = $(AVR_TOOLS_PATH)/avr-ar
-SIZE = $(AVR_TOOLS_PATH)/avr-size
-NM = $(AVR_TOOLS_PATH)/avr-nm
-AVRDUDE = $(AVRDUDE_PATH)/avrdude
-REMOVE = rm -f
-MV = mv -f
-
-# Define all object files.
-OBJ = $(SRC:.c=.o) $(CXXSRC:.cpp=.o) $(ASRC:.S=.o)
-OBJ_MODULES = $(C_MODULES:.c=.o) $(CXX_MODULES:.cpp=.o) $(ARDUINO_LIB:.cpp=.o)
-OBJ_APP = $(APP_SKETCH:.cpp=.o) $(APP_SRC_CXX:.cpp=.o) $(APP_SRC_C:.c=.o)
-
-# Define all listing files.
-LST = $(ASRC:.S=.lst) $(CXXSRC:.cpp=.lst) $(SRC:.c=.lst)
-
-# Combine all necessary flags and optional flags.
-# Add target processor to flags.
-ALL_CFLAGS = $(CFLAGS) -mmcu=$(MCU)
-ALL_CXXFLAGS = $(CXXFLAGS) -mmcu=$(MCU)
-ALL_ASFLAGS = -x assembler-with-cpp $(ASFLAGS) -mmcu=$(MCU)
-ALL_LDFLAGS = $(LDFLAGS) -mmcu=$(MCU)
+# This makefile can be used as a drop-in replacement for the Arduino IDE's
+# build system.  To use it, just copy arduino.mk in to your project directory.
+# Or, you could save it somewhere (I keep mine at ~/src/arduino.mk) and create
+# a symlink to it in your project directory, named "Makefile".  For example:
+#
+#   $ ln -s ~/src/arduino.mk Makefile
+#
+# The Arduino software (version 1.0 or later) is required.  On GNU/Linux you
+# can probably install the software from your package manager.  If you are
+# using Debian (or a derivative), try `apt-get install arduino`.  Otherwise,
+# you can download the Arduino software manually from http://arduino.cc/.  It
+# is suggested that you install it at ~/opt/arduino (or /Applications on OS X)
+# if you are unsure.
+#
+# If you downloaded the Arduino software manually and unpacked it somewhere
+# other than ~/opt/arduino (or /Applications), you will need to set up the
+# ARDUINODIR environment variable to be the path where you unpacked it.  (If
+# unset, ARDUINODIR defaults to some sensible places).  You could set this in
+# your ~/.profile by adding something like this:
+#
+#   export ARDUINODIR=~/somewhere/arduino-1.0
+#
+# For each project, you will also need to set BOARD to the type of Arduino
+# you're building for.  Type `make boards` for a list of acceptable values.
+# For example:
+#
+#   $ export BOARD=uno
+#   $ make
+#
+# You may also need to set SERIALDEV if it is not detected correctly.
+#
+# The presence of a .ino (or .pde) file causes the arduino.mk to automatically
+# determine values for SOURCES, TARGET and LIBRARIES.  Any .c, .cc and .cpp
+# files in the project directory (or any "util" or "utility" subdirectories)
+# are automatically included in the build and are scanned for Arduino libraries
+# that have been #included.  Note, there can only be one .ino (or .pde) file in
+# a project directory and if you want to be compatible with the Arduino IDE, it
+# should be called the same as the directory name.
+#
+# Alternatively, if you want to manually specify build variables, create a
+# Makefile that defines SOURCES and LIBRARIES and then includes arduino.mk.
+# (There is no need to define TARGET).  You can also specify the BOARD here, if
+# the project has a specific one.  Here is an example Makefile:
+#
+#   SOURCES := main.cc other.cc
+#   LIBRARIES := EEPROM
+#   BOARD := pro5v
+#   include ~/src/arduino.mk
+#
+# Here is a complete list of configuration parameters:
+#
+# ARDUINODIR   The path where the Arduino software is installed on your system.
+#
+# ARDUINOCONST The Arduino software version, as an integer, used to define the
+#              ARDUINO version constant.  This defaults to 100 if undefined.
+#
+# AVRDUDECONF  The avrdude.conf to use.  If undefined, this defaults to a guess
+#              based on where avrdude is.  If set empty, no avrdude.conf is
+#              passed to avrdude (so the system default is used).
+#
+# AVRDUDEFLAGS Specify any additional flags for avrdude.  The usual flags,
+#              required to build the project, will be appended to this.
+#
+# AVRTOOLSPATH A space-separated list of directories that is searched in order
+#              when looking for the avr build tools.  This defaults to PATH,
+#              followed by subdirectories in ARDUINODIR.
+#
+# BOARD        Specify a target board type.  Run `make boards` to see available
+#              board types.
+#
+# CPPFLAGS     Specify any additional flags for the compiler.  The usual flags,
+#              required to build the project, will be appended to this.
+#
+# LINKFLAGS    Specify any additional flags for the linker.  The usual flags,
+#              required to build the project, will be appended to this.
+#
+# LIBRARIES    A list of Arduino libraries to build and include.  This is set
+#              automatically if a .ino (or .pde) is found.
+#
+# LIBRARYPATH  A space-separated list of directories that is searched in order
+#              when looking for Arduino libraries.  This defaults to "libs",
+#              "libraries" (in the project directory), then your sketchbook
+#              "libraries" directory, then the Arduino libraries directory.
+#
+# SERIALDEV    The POSIX device name of the serial device that is the Arduino.
+#              If unspecified, an attempt is made to guess the name of a
+#              connected Arduino's serial device, which may work in some cases.
+#
+# SOURCES      A list of all source files of whatever language.  The language
+#              type is determined by the file extension.  This is set
+#              automatically if a .ino (or .pde) is found.
+#
+# TARGET       The name of the target file.  This is set automatically if a
+#              .ino (or .pde) is found, but it is not necessary to set it
+#              otherwise.
+#
+# This makefile also defines the following goals for use on the command line
+# when you run make:
+#
+# all          This is the default if no goal is specified.  It builds the
+#              target.
+#
+# target       Builds the target.
+#
+# upload       Uploads the target (building it, as necessary) to an attached
+#              Arduino.
+#
+# clean        Deletes files created during the build.
+#
+# boards       Display a list of available board names, so that you can set the
+#              BOARD environment variable appropriately.
+#
+# monitor      Start `screen` on the serial device.  This is meant to be an
+#              equivalent to the Arduino serial monitor.
+#
+# size         Displays size information about the built target.
+#
+# bootloader   Burns the bootloader for your board to it.
+#
+# <file>       Builds the specified file, either an object file or the target,
+#              from those that that would be built for the project.
+#_______________________________________________________________________________
+#
+
+# default arduino software directory, check software exists
+ifndef ARDUINODIR
+ARDUINODIR := $(firstword $(wildcard ~/opt/arduino /usr/share/arduino \
+	/Applications/Arduino.app/Contents/Resources/Java \
+	$(HOME)/Applications/Arduino.app/Contents/Resources/Java))
+endif
+ifeq "$(wildcard $(ARDUINODIR)/hardware/arduino/boards.txt)" ""
+$(error ARDUINODIR is not set correctly; arduino software not found)
+endif
+
+# default arduino version
+ARDUINOCONST ?= 100
+
+# default path for avr tools
+AVRTOOLSPATH ?= $(subst :, , $(PATH)) $(ARDUINODIR)/hardware/tools \
+	$(ARDUINODIR)/hardware/tools/avr/bin
+
+# default path to find libraries
+LIBRARYPATH ?= libraries libs $(SKETCHBOOKDIR)/libraries $(ARDUINODIR)/libraries
+
+# default serial device to a poor guess (something that might be an arduino)
+SERIALDEVGUESS := 0
+ifndef SERIALDEV
+SERIALDEV := $(firstword $(wildcard \
+	/dev/ttyACM? /dev/ttyUSB? /dev/tty.usbserial* /dev/tty.usbmodem*))
+SERIALDEVGUESS := 1
+endif
+
+# no board?
+ifndef BOARD
+ifneq "$(MAKECMDGOALS)" "boards"
+ifneq "$(MAKECMDGOALS)" "clean"
+$(error BOARD is unset.  Type 'make boards' to see possible values)
+endif
+endif
+endif
+
+# obtain board parameters from the arduino boards.txt file
+BOARDSFILE := $(ARDUINODIR)/hardware/arduino/boards.txt
+readboardsparam = $(shell sed -ne "s/$(BOARD).$(1)=\(.*\)/\1/p" $(BOARDSFILE))
+BOARD_BUILD_MCU := $(call readboardsparam,build.mcu)
+BOARD_BUILD_FCPU := $(call readboardsparam,build.f_cpu)
+BOARD_BUILD_VARIANT := $(call readboardsparam,build.variant)
+BOARD_UPLOAD_SPEED := $(call readboardsparam,upload.speed)
+BOARD_UPLOAD_PROTOCOL := $(call readboardsparam,upload.protocol)
+BOARD_USB_VID := $(call readboardsparam,build.vid)
+BOARD_USB_PID := $(call readboardsparam,build.pid)
+BOARD_BOOTLOADER_UNLOCK := $(call readboardsparam,bootloader.unlock_bits)
+BOARD_BOOTLOADER_LOCK := $(call readboardsparam,bootloader.lock_bits)
+BOARD_BOOTLOADER_LFUSES := $(call readboardsparam,bootloader.low_fuses)
+BOARD_BOOTLOADER_HFUSES := $(call readboardsparam,bootloader.high_fuses)
+BOARD_BOOTLOADER_EFUSES := $(call readboardsparam,bootloader.extended_fuses)
+BOARD_BOOTLOADER_PATH := $(call readboardsparam,bootloader.path)
+BOARD_BOOTLOADER_FILE := $(call readboardsparam,bootloader.file)
+
+# obtain preferences from the IDE's preferences.txt
+PREFERENCESFILE := $(firstword $(wildcard \
+	$(HOME)/.arduino/preferences.txt $(HOME)/Library/Arduino/preferences.txt))
+ifneq "$(PREFERENCESFILE)" ""
+readpreferencesparam = $(shell sed -ne "s/$(1)=\(.*\)/\1/p" $(PREFERENCESFILE))
+SKETCHBOOKDIR := $(call readpreferencesparam,sketchbook.path)
+endif
+
+# invalid board?
+ifeq "$(BOARD_BUILD_MCU)" ""
+ifneq "$(MAKECMDGOALS)" "boards"
+ifneq "$(MAKECMDGOALS)" "clean"
+$(error BOARD is invalid.  Type 'make boards' to see possible values)
+endif
+endif
+endif
+
+# auto mode?
+INOFILE := $(wildcard *.ino *.pde)
+ifdef INOFILE
+ifneq "$(words $(INOFILE))" "1"
+$(error There is more than one .pde or .ino file in this directory!)
+endif
+
+# automatically determine sources and targeet
+TARGET := $(basename $(INOFILE))
+SOURCES := $(INOFILE) \
+	$(wildcard *.c *.cc *.cpp *.C) \
+	$(wildcard $(addprefix util/, *.c *.cc *.cpp *.C)) \
+	$(wildcard $(addprefix utility/, *.c *.cc *.cpp *.C))
+
+# automatically determine included libraries
+LIBRARIES := $(filter $(notdir $(wildcard $(addsuffix /*, $(LIBRARYPATH)))), \
+	$(shell sed -ne "s/^ *\# *include *[<\"]\(.*\)\.h[>\"]/\1/p" $(SOURCES)))
+
+endif
+
+# software
+findsoftware = $(firstword $(wildcard $(addsuffix /$(1), $(AVRTOOLSPATH))))
+CC := $(call findsoftware,avr-gcc)
+CXX := $(call findsoftware,avr-g++)
+LD := $(call findsoftware,avr-ld)
+AR := $(call findsoftware,avr-ar)
+OBJCOPY := $(call findsoftware,avr-objcopy)
+AVRDUDE := $(call findsoftware,avrdude)
+AVRSIZE := $(call findsoftware,avr-size)
+
+# directories
+ARDUINOCOREDIR := $(ARDUINODIR)/hardware/arduino/cores/arduino
+LIBRARYDIRS := $(foreach lib, $(LIBRARIES), \
+	$(firstword $(wildcard $(addsuffix /$(lib), $(LIBRARYPATH)))))
+LIBRARYDIRS += $(addsuffix /utility, $(LIBRARYDIRS))
+
+# files
+TARGET := $(if $(TARGET),$(TARGET),a.out)
+OBJECTS := $(addsuffix .o, $(basename $(SOURCES)))
+DEPFILES := $(patsubst %, .dep/%.dep, $(SOURCES))
+ARDUINOLIB := .lib/arduino.a
+ARDUINOLIBOBJS := $(foreach dir, $(ARDUINOCOREDIR) $(LIBRARYDIRS), \
+	$(patsubst %, .lib/%.o, $(wildcard $(addprefix $(dir)/, *.c *.cpp))))
+BOOTLOADERHEX := $(addprefix \
+	$(ARDUINODIR)/hardware/arduino/bootloaders/$(BOARD_BOOTLOADER_PATH)/, \
+	$(BOARD_BOOTLOADER_FILE))
+
+# avrdude confifuration
+ifeq "$(AVRDUDECONF)" ""
+ifeq "$(AVRDUDE)" "$(ARDUINODIR)/hardware/tools/avr/bin/avrdude"
+AVRDUDECONF := $(ARDUINODIR)/hardware/tools/avr/etc/avrdude.conf
+else
+AVRDUDECONF := $(wildcard $(AVRDUDE).conf)
+endif
+endif
+
+# flags
+CPPFLAGS += -Os -Wall -fno-exceptions -ffunction-sections -fdata-sections
+CPPFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CPPFLAGS += -mmcu=$(BOARD_BUILD_MCU)
+CPPFLAGS += -DF_CPU=$(BOARD_BUILD_FCPU) -DARDUINO=$(ARDUINOCONST)
+CPPFLAGS += -DUSB_VID=$(BOARD_USB_VID) -DUSB_PID=$(BOARD_USB_PID)
+CPPFLAGS += -I. -Iutil -Iutility -I $(ARDUINOCOREDIR)
+CPPFLAGS += -I $(ARDUINODIR)/hardware/arduino/variants/$(BOARD_BUILD_VARIANT)/
+CPPFLAGS += $(addprefix -I , $(LIBRARYDIRS))
+CPPDEPFLAGS = -MMD -MP -MF .dep/$<.dep
+CPPINOFLAGS := -x c++ -include $(ARDUINOCOREDIR)/Arduino.h
+AVRDUDEFLAGS += $(addprefix -C , $(AVRDUDECONF)) -DV
+AVRDUDEFLAGS += -p $(BOARD_BUILD_MCU) -P $(SERIALDEV)
+AVRDUDEFLAGS += -c $(BOARD_UPLOAD_PROTOCOL) -b $(BOARD_UPLOAD_SPEED)
+LINKFLAGS += -Os -Wl,--gc-sections -mmcu=$(BOARD_BUILD_MCU)
+
+# figure out which arg to use with stty (for OS X, GNU and busybox stty)
+STTYFARG := $(shell stty --help 2>&1 | \
+	grep -q 'illegal option' && echo -f || echo -F)
+
+# include dependencies
+ifneq "$(MAKECMDGOALS)" "clean"
+-include $(DEPFILES)
+endif
+
+# default rule
+.DEFAULT_GOAL := all
+
+#_______________________________________________________________________________
+#                                                                          RULES
+
+.PHONY:	all target upload clean boards monitor size bootloader
+
+all: target
+
+target: $(TARGET).hex
+
+upload: target
+	@echo "\nUploading to board..."
+	@test -n "$(SERIALDEV)" || { \
+		echo "error: SERIALDEV could not be determined automatically." >&2; \
+		exit 1; }
+	@test 0 -eq $(SERIALDEVGUESS) || { \
+		echo "*GUESSING* at serial device:" $(SERIALDEV); \
+		echo; }
+#ifeq "$(BOARD_BOOTLOADER_PATH)" "caterina"
+#	stty $(STTYFARG) $(SERIALDEV) speed 1200
+#	sleep 1
+#else
+#	stty $(STTYFARG) $(SERIALDEV) hupcl
+#endif
+	$(AVRDUDE) $(AVRDUDEFLAGS) -U flash:w:$(TARGET).hex:i
 
-# Default target.
-all: applet_files build sizeafter
-
-build: elf hex
-
-#applet_files: $(TARGET).pde
-# Here is the "preprocessing".
-# It creates a .cpp file based with the same name as the .ino file.
-# On top of the new .cpp file comes the WProgram.h header.
-# and prototypes for setup() and Loop()
-# Then the .cpp file will be compiled. Errors during compile will
-# refer to this new, automatically generated, file.
-# Not the original .ino file you actually edit...
-applet/$(TARGET).cpp: $(TARGET).ino
-	test -d applet || mkdir applet
-	echo '#include "Arduino.h"' > applet/$(TARGET).cpp
-	cat *.ino > .$(TARGET)_merged.ino
-	echo `arduino-preprocess .$(TARGET)_merged.ino` >> applet/$(TARGET).cpp
-	cat .$(TARGET)_merged.ino >> applet/$(TARGET).cpp
-	rm .$(TARGET)_merged.ino
-
-elf: applet/$(TARGET).elf
-hex: applet/$(TARGET).hex
-eep: applet/$(TARGET).eep
-lss: applet/$(TARGET).lss
-sym: applet/$(TARGET).sym
-
-# Program the device.  
-upload: applet/$(TARGET).hex
-	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH)
-
-
-	# Display size of file.
-HEXSIZE = $(SIZE) --target=$(FORMAT) applet/$(TARGET).hex
-ELFSIZE = $(SIZE)  applet/$(TARGET).elf
-sizebefore:
-	@if [ -f applet/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(HEXSIZE); echo; fi
-
-sizeafter:
-	@if [ -f applet/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_AFTER); $(HEXSIZE); echo; fi
-
-
-# Convert ELF to COFF for use in debugging / simulating in AVR Studio or VMLAB.
-COFFCONVERT=$(OBJCOPY) --debugging \
---change-section-address .data-0x800000 \
---change-section-address .bss-0x800000 \
---change-section-address .noinit-0x800000 \
---change-section-address .eeprom-0x810000
-
-
-coff: applet/$(TARGET).elf
-	$(COFFCONVERT) -O coff-avr applet/$(TARGET).elf $(TARGET).cof
-
-
-extcoff: $(TARGET).elf
-	$(COFFCONVERT) -O coff-ext-avr applet/$(TARGET).elf $(TARGET).cof
-
-
-.SUFFIXES: .elf .hex .eep .lss .sym
-
-.elf.hex:
-	$(OBJCOPY) -O $(FORMAT) -R .eeprom $< $@
-
-.elf.eep:
-	$(OBJCOPY) -O $(FORMAT) -j .eeprom --set-section-flags=.eeprom="alloc,load" \
-	--no-change-warnings \
-	--change-section-lma .eeprom=0 $< $@
-
-# Create extended listing file from ELF output file.
-.elf.lss:
-	$(OBJDUMP) -h -S $< > $@
-
-# Create a symbol table from ELF output file.
-.elf.sym:
-	$(NM) -n $< > $@
-
-	# Link: create ELF output file from library.
-#applet/$(TARGET).elf: $(TARGET).ino applet/core.a
-applet/$(TARGET).elf: $(OBJ_APP) applet/core.a
-	$(LD) $(ALL_LDFLAGS) -o $@ $(OBJ_APP) applet/core.a
-
-applet/core.a: $(OBJ_MODULES)
-	@for i in $(OBJ_MODULES); do echo $(AR) rcs applet/core.a $$i; $(AR) rcs applet/core.a $$i; done
-
-
-
-# Compile: create object files from C++ source files.
-.cpp.o:
-	$(CXX) -c $(ALL_CXXFLAGS) $< -o $@
-
-# Compile: create object files from C source files.
-.c.o:
-	$(CC) -c $(ALL_CFLAGS) $< -o $@
-
-
-# Compile: create assembler files from C source files.
-.c.s:
-	$(CC) -S $(ALL_CFLAGS) $< -o $@
-
-
-# Assemble: create object files from assembler source files.
-.S.o:
-	$(CC) -c $(ALL_ASFLAGS) $< -o $@
-
-
-# Automatic dependencies
-%.d: %.c
-	$(CC) -M $(ALL_CFLAGS) $< | sed "s;$(notdir $*).o:;$*.o $*.d:;" > $@
-
-%.d: %.cpp
-	$(CXX) -M $(ALL_CXXFLAGS) $< | sed "s;$(notdir $*).o:;$*.o $*.d:;" > $@
-
-
-# Target: clean project.
 clean:
-	$(REMOVE) applet/$(TARGET).hex applet/$(TARGET).eep applet/$(TARGET).cof applet/$(TARGET).elf \
-	applet/$(TARGET).map applet/$(TARGET).sym applet/$(TARGET).lss applet/core.a \
-	$(OBJ) $(LST) $(SRC:.c=.s) $(SRC:.c=.d) $(CXXSRC:.cpp=.s) $(CXXSRC:.cpp=.d)
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).elf $(TARGET).hex $(ARDUINOLIB) *~
+	rm -rf .lib .dep
 
-.PHONY:	all build elf hex eep lss sym program coff extcoff clean applet_files sizebefore sizeafter
+boards:
+	@echo "Available values for BOARD:"
+	@sed -nEe '/^#/d; /^[^.]+\.name=/p' $(BOARDSFILE) | \
+		sed -Ee 's/([^.]+)\.name=(.*)/\1            \2/' \
+			-e 's/(.{12}) *(.*)/\1 \2/'
 
-#include $(SRC:.c=.d)
-#include $(CXXSRC:.cpp=.d)
+monitor:
+	@test -n "$(SERIALDEV)" || { \
+		echo "error: SERIALDEV could not be determined automatically." >&2; \
+		exit 1; }
+	@test -n `which screen` || { \
+		echo "error: can't find GNU screen, you might need to install it." >&2 \
+		exit 1; }
+	@test 0 -eq $(SERIALDEVGUESS) || { \
+		echo "*GUESSING* at serial device:" $(SERIALDEV); \
+		echo; }
+	screen $(SERIALDEV)
+
+size: $(TARGET).elf
+	echo && $(AVRSIZE) --format=avr --mcu=$(BOARD_BUILD_MCU) $(TARGET).elf
+
+bootloader:
+	@echo "Burning bootloader to board..."
+	@test -n "$(SERIALDEV)" || { \
+		echo "error: SERIALDEV could not be determined automatically." >&2; \
+		exit 1; }
+	@test 0 -eq $(SERIALDEVGUESS) || { \
+		echo "*GUESSING* at serial device:" $(SERIALDEV); \
+		echo; }
+	stty $(STTYFARG) $(SERIALDEV) hupcl
+	$(AVRDUDE) $(AVRDUDEFLAGS) -U lock:w:$(BOARD_BOOTLOADER_UNLOCK):m
+	$(AVRDUDE) $(AVRDUDEFLAGS) -eU lfuse:w:$(BOARD_BOOTLOADER_LFUSES):m
+	$(AVRDUDE) $(AVRDUDEFLAGS) -U hfuse:w:$(BOARD_BOOTLOADER_HFUSES):m
+ifneq "$(BOARD_BOOTLOADER_EFUSES)" ""
+	$(AVRDUDE) $(AVRDUDEFLAGS) -U efuse:w:$(BOARD_BOOTLOADER_EFUSES):m
+endif
+ifneq "$(BOOTLOADERHEX)" ""
+	$(AVRDUDE) $(AVRDUDEFLAGS) -U flash:w:$(BOOTLOADERHEX):i
+endif
+	$(AVRDUDE) $(AVRDUDEFLAGS) -U lock:w:$(BOARD_BOOTLOADER_LOCK):m
+
+# building the target
+
+$(TARGET).hex: $(TARGET).elf
+	$(OBJCOPY) -O ihex -R .eeprom $< $@
+
+.INTERMEDIATE: $(TARGET).elf
+
+$(TARGET).elf: $(ARDUINOLIB) $(OBJECTS)
+	$(CC) $(LINKFLAGS) $(OBJECTS) $(ARDUINOLIB) -lm -o $@
+
+%.o: %.c
+	mkdir -p .dep/$(dir $<)
+	$(COMPILE.c) $(CPPDEPFLAGS) -o $@ $<
+
+%.o: %.cpp
+	mkdir -p .dep/$(dir $<)
+	$(COMPILE.cpp) $(CPPDEPFLAGS) -o $@ $<
+
+%.o: %.cc
+	mkdir -p .dep/$(dir $<)
+	$(COMPILE.cpp) $(CPPDEPFLAGS) -o $@ $<
+
+%.o: %.C
+	mkdir -p .dep/$(dir $<)
+	$(COMPILE.cpp) $(CPPDEPFLAGS) -o $@ $<
+
+%.o: %.ino
+	mkdir -p .dep/$(dir $<)
+	$(COMPILE.cpp) $(CPPDEPFLAGS) -o $@ $(CPPINOFLAGS) $<
+
+%.o: %.pde
+	mkdir -p .dep/$(dir $<)
+	$(COMPILE.cpp) $(CPPDEPFLAGS) -o $@ $(CPPINOFLAGS) $<
+
+# building the arduino library
+
+$(ARDUINOLIB): $(ARDUINOLIBOBJS)
+	$(AR) rcs $@ $?
+
+.lib/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(COMPILE.c) -o $@ $<
+
+.lib/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	$(COMPILE.cpp) -o $@ $<
+
+.lib/%.cc.o: %.cc
+	mkdir -p $(dir $@)
+	$(COMPILE.cpp) -o $@ $<
+
+.lib/%.C.o: %.C
+	mkdir -p $(dir $@)
+	$(COMPILE.cpp) -o $@ $<
+
+# Local Variables:
+# mode: makefile
+# tab-width: 4
+# End:
