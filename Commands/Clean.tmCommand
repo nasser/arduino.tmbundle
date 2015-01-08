@@ -5,12 +5,12 @@
 	<key>autoScrollOutput</key>
 	<true/>
 	<key>beforeRunningCommand</key>
-	<string>saveModifiedFiles</string>
+	<string>nop</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18 -wKU
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/executor"
 
-script_args = ["-e","-f","#{ENV['TM_BUNDLE_SUPPORT']}/Makefile"]
+script_args = ["-e","-f","#{ENV['TM_BUNDLE_SUPPORT']}/Makefile","clean"]
 
 TextMate::Executor.run("/Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make",  :script_args =&gt; script_args)
 </string>
@@ -19,9 +19,9 @@ TextMate::Executor.run("/Applications/Arduino.app/Contents/Resources/Java/hardwa
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>keyEquivalent</key>
-	<string>@b</string>
+	<string>^@c</string>
 	<key>name</key>
-	<string>Compile</string>
+	<string>Clean</string>
 	<key>outputCaret</key>
 	<string>afterOutput</string>
 	<key>outputFormat</key>
@@ -31,7 +31,7 @@ TextMate::Executor.run("/Applications/Arduino.app/Contents/Resources/Java/hardwa
 	<key>scope</key>
 	<string>source.c++.arduino</string>
 	<key>uuid</key>
-	<string>B901B2C1-83A7-48E6-BA88-00220566836C</string>
+	<string>A39EFEA0-67CB-4666-BD90-3A735CBB42A2</string>
 	<key>version</key>
 	<integer>2</integer>
 </dict>
