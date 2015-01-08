@@ -42,7 +42,7 @@ Textmate > Preferences > Advanced > Shell Variables
   </tr>
   <tr>
 	  <td>SERIALDEV</td>
-	  <td>We try to guess the correct serial port. If that is not possible, you have to set the correct serial port. <br />Like: `/dev/tty.usbmodem1411`</td>
+	  <td>We try to guess the correct serial port. If that is not possible, you have to set the correct serial port. <br />Like: <code>/dev/tty.usbmodem1411</code></td>
   </tr>
 </table>
 
