@@ -8,11 +8,23 @@
 	<string>saveModifiedFiles</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18 -wKU
+
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/executor"
 
-script_args = ["-e","-f","#{ENV['TM_BUNDLE_SUPPORT']}/Makefile","upload"]
-
-TextMate::Executor.run("/Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make",  :script_args =&gt; script_args)
+# from version 1.5.0 arduino has its own official CLI, 
+if `/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" /Applications/Arduino.app/Contents/Info.plist` &gt;= "1.5"
+  
+  `cd '#{ENV['TM_DIRECTORY']}'`
+  
+  arduino_IDE = "/Applications/Arduino.app/Contents/MacOS/JavaApplicationStub"
+  scr_args = ["--upload", ENV['TM_FILEPATH']]
+  ver_args = ["--get-pref", "dummy"] # skip version check
+  
+  TextMate::Executor.run(arduino_IDE, :script_args =&gt; scr_args, :version_args =&gt; ver_args, :verb =&gt; "Compiling &amp; uploading")
+else
+  script_args = ["-e", "-f", "#{ENV['TM_BUNDLE_SUPPORT']}/Makefile", "upload"]
+  TextMate::Executor.run("/Applications/Arduino.app/Contents/Resources/Java/hardware/tools/avr/bin/make", :script_args =&gt; script_args)
+end
 </string>
 	<key>input</key>
 	<string>none</string>
