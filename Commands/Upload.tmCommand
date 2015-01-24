@@ -8,16 +8,29 @@
 	<string>saveModifiedFiles</string>
 	<key>command</key>
 	<string>#!/usr/bin/env ruby18 -wKU
-
 require ENV["TM_SUPPORT_PATH"] + "/lib/tm/executor"
 
+def saveTempINOFile(contents)
+  require 'tmpdir'
+  require 'fileutils'
+  
+  dir = Dir.mktmpdir();
+  at_exit { FileUtils.remove_entry dir }
+  project_folder = FileUtils.mkdir_p "#{dir}/Sketch"
+
+  file = File.new("#{project_folder}/Sketch.ino", File::RDWR|File::CREAT|File::EXCL, 0600)
+  file.write(contents)
+  file.close()
+  
+  return file.path
+end
+
 # from version 1.5.0 arduino has its own official CLI, 
-if `/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" /Applications/Arduino.app/Contents/Info.plist` &gt;= "1.5"
+if `/usr/libexec/PlistBuddy -c "print CFBundleVersion" /Applications/Arduino.app/Contents/Info.plist` &gt;= "1.5"
   
-  `cd '#{ENV['TM_DIRECTORY']}'`
-  
+  filepath = ENV['TM_FILEPATH'] || saveTempINOFile(STDIN.read)
   arduino_IDE = "/Applications/Arduino.app/Contents/MacOS/JavaApplicationStub"
-  scr_args = ["--upload", ENV['TM_FILEPATH']]
+  scr_args = ["--upload", filepath]
   ver_args = ["--get-pref", "dummy"] # skip version check
   
   TextMate::Executor.run(arduino_IDE, :script_args =&gt; scr_args, :version_args =&gt; ver_args, :verb =&gt; "Compiling &amp; uploading")
@@ -27,7 +40,7 @@ else
 end
 </string>
 	<key>input</key>
-	<string>none</string>
+	<string>document</string>
 	<key>inputFormat</key>
 	<string>text</string>
 	<key>keyEquivalent</key>
